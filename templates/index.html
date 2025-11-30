@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="https://uploads.onecompiler.io/42bwrvdku/44678ztpx/%E2%80%94Pngtree%E2%80%94lung%20logo%20template%20vector%20icon_12524212.png">
+    <title>PneumoDetect AI</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* =========================================
+           CSS VARIABLES (LIGHT MODE ONLY)
+           ========================================= */
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --navbar-bg: rgba(255, 255, 255, 0.95);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --footer-bg: #ffffff;
+        }
+
+        /* =========================================
+           BASE STYLES
+           ========================================= */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--navbar-bg) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem !important;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color) !important;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Sections */
+        .spa-section {
+            display: none;
+            /* Padding atas dipertahankan agar tidak tertutup navbar */
+            padding-top: 140px; 
+            padding-bottom: 50px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .spa-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards General */
+        .custom-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Typography Colors */
+        h1, h2, h3, h4, h5, h6 { color: var(--text-main); }
+        p, li, .text-muted-custom { color: var(--text-muted); }
+
+        /* Buttons & Inputs */
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            color: white;
+        }
+
+        /* === UPLOAD AREA === */
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            background-color: rgba(128, 128, 128, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem; 
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .image-preview {
+            max-height: 200px;
+            width: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            display: none;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* === ABOUT SECTION STYLES (NEW) === */
+        .urgency-box {
+            border-left: 4px solid var(--primary-color);
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.05), transparent);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-placeholder-card {
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 1rem;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            transition: all 0.3s;
+        }
+        .chart-placeholder-card:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        /* === TEAM SECTION === */
+        .team-card-new {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .team-card-new:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .team-avatar-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .team-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .team-role-badge {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Accordion */
+        .accordion-button {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+        }
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem !important;
+            overflow: hidden;
+        }
+        .accordion-body {
+            color: var(--text-muted);
+            background-color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto; 
+            background-color: var(--footer-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-lungs-fill me-2"></i>PneumoDetect
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('home')">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('predict')">Diagnosa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('about')">Tentang Sistem</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('team')">Tim</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="spa-section active">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3">Project Analisis Big Data</span>
+                    <h1 class="display-3 fw-bold mb-4">Deteksi Cerdas <span style="color: var(--primary-color);">Pneumonia</span></h1>
+                    <p class="lead text-muted-custom mb-5">
+                        Memanfaatkan kekuatan Artificial Intelligence dan Big Data untuk membantu diagnosis dini penyakit paru-paru dengan akurasi tinggi dan efisiensi waktu.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-primary-custom shadow-lg" onclick="showSection('predict')">
+                            <i class="bi bi-search me-2"></i>Mulai Analisis
+                        </button>
+                        <button class="btn btn-outline-secondary rounded-3 px-4 fw-bold" onclick="showSection('about')">
+                            Pelajari Selengkapnya
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="https://uploads.onecompiler.io/42bwrvdku/44676x3ah/hero.png"
+                         alt="AI Healthcare"
+                         class="img-fluid rounded-4"
+                         style="max-height:450px; background:transparent; box-shadow:none; border:none; display:block; margin:0 auto;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="predict" class="spa-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-primary fw-bold text-uppercase">Diagnosis AI</h6>
+                <h2 class="fw-bold">Analisis Citra X-Ray</h2>
+                <p class="text-muted-custom">Unggah citra dada (Chest X-Ray) untuk mendapatkan hasil prediksi instan.</p>
+            </div>
+
+            <div class="row g-4 justify-content-center align-items-stretch">
+                <div class="col-lg-5">
+                    <div class="custom-card p-3 h-100">
+                        <form id="upload-form" class="h-100 d-flex flex-column">
+                            <div class="upload-area" id="drop-area" onclick="document.getElementById('file-input').click()">
+                                <i class="bi bi-cloud-arrow-up" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+                                <h5 class="mt-2 fs-6">Klik atau Seret Gambar</h5>
+                                <p class="small text-muted-custom mb-0">Format: JPG, PNG (Max 5MB)</p>
+                                <input type="file" id="file-input" name="file" accept="image/*" hidden>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <img id="image-preview" class="image-preview" src="#" alt="Preview">
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom w-100 mt-auto pt-3 pb-3" id="btn-analyze" disabled>
+                                <span class="spinner-border spinner-border-sm d-none me-2"></span>
+                                <span id="btn-text">Jalankan Analisis</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div id="result-placeholder" class="custom-card p-4 text-center d-flex flex-column justify-content-center align-items-center h-100">
+                        <i class="bi bi-heart-pulse" style="font-size: 3rem; opacity: 0.2; color: var(--text-muted);"></i>
+                        <p class="mt-2 text-muted-custom small">Hasil diagnosa akan muncul di sini.</p>
+                    </div>
+
+                    <div id="result-card" class="custom-card p-3 d-none h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Hasil Diagnosa</h5>
+                            <span class="badge bg-success rounded-pill small">Selesai</span>
+                        </div>
+
+                        <div class="text-center py-4 rounded-3 mb-3 flex-grow-1 d-flex flex-column justify-content-center" id="result-header-bg" style="background-color: rgba(59, 130, 246, 0.1);">
+                            <h6 class="text-muted text-uppercase small mb-1">Kondisi Paru-Paru</h6>
+                            <h2 class="fw-bold mb-0" id="diagnosis-text">--</h2>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1 small">
+                                <span class="fw-semibold">Tingkat Keyakinan</span>
+                                <span class="fw-bold" style="color: var(--primary-color);" id="confidence-text">0%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div id="confidence-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border shadow-sm rounded-3 d-flex align-items-start p-2 mb-0" role="alert" style="background-color: var(--bg-body); border-color: var(--border-color);">
+                            <i id="info-icon" class="bi bi-info-circle-fill me-2 fs-5" style="color: var(--primary-color);"></i>
+                            <div>
+                                <h6 class="fw-bold small mb-1">Rekomendasi Medis</h6>
+                                <p class="mb-0 small text-muted-custom" id="result-message" style="font-size: 0.85rem;">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="spa-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-primary fw-bold text-uppercase">Detail Sistem</h6>
+                <h2 class="fw-bold">Latar Belakang & Performa Model</h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="urgency-box">
+                        <h4 class="fw-bold mb-3"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Mengapa Sistem Ini Penting?</h4>
+                        <p>
+                            Pneumonia adalah penyebab kematian tertinggi pada balita di dunia (WHO). Sistem ini dirancang sebagai <strong>"Second Opinion"</strong> untuk membantu radiolog mendeteksi pola pneumonia pada citra X-Ray yang mungkin terlewatkan oleh mata manusia, terutama dalam kondisi kelelahan.
+                        </p>
+                    </div>
+
+                    <h4 class="fw-bold mb-3">Metodologi & Arsitektur</h4>
+                    <div class="accordion" id="methodAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c1">
+                                    <i class="bi bi-database-fill me-2"></i> Dataset & Preprocessing
+                                </button>
+                            </h2>
+                            <div id="c1" class="accordion-collapse collapse show" data-bs-parent="#methodAccordion">
+                                <div class="accordion-body small">
+                                    Dataset: 5,863 citra X-Ray (Kaggle).<br>
+                                    Preprocessing: Resize 150x150, Rescaling 1./255, Augmentasi (Rotation 15, Zoom 0.2, Horizontal Flip) untuk mengatasi overfitting.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c2">
+                                    <i class="bi bi-cpu-fill me-2"></i> Model CNN Custom
+                                </button>
+                            </h2>
+                            <div id="c2" class="accordion-collapse collapse" data-bs-parent="#methodAccordion">
+                                <div class="accordion-body small">
+                                    <strong>Arsitektur:</strong> 4 Blok Konvolusi (32, 64, 128, 128 filters) dengan MaxPooling.<br>
+                                    <strong>Fully Connected:</strong> Flatten, Dense (512 neuron) dengan L2 Regularization & Dropout (0.5), Output Layer (Sigmoid).<br>
+                                    <strong>Optimizer:</strong> Adam (LR=0.0001).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-flex flex-column gap-3">
+                    <div class="custom-card p-4 text-center">
+                        <h6 class="fw-bold mb-3">Distribusi Kelas Data</h6>
+                        <div style="height: 200px; position: relative;">
+                            <canvas id="classDistChart"></canvas>
+                        </div>
+                        <p class="small text-muted mb-0 mt-2">Data tidak seimbang (Imbalanced) ditangani dengan <em>Class Weights</em>.</p>
+                    </div>
+
+                    <div class="custom-card p-4">
+                        <h6 class="fw-bold mb-3 border-bottom pb-2">Metrik Performansi (Test Set)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted">Akurasi Total</span>
+                            <span class="badge bg-success rounded-pill">89%</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted">Recall (Pneumonia)</span>
+                            <span class="badge bg-primary rounded-pill">98%</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small text-muted">AUC Score</span>
+                            <span class="badge bg-dark rounded-pill">0.96</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5 g-4">
+                <div class="col-12">
+                    <h4 class="fw-bold text-center mb-2">Visualisasi Hasil Pelatihan</h4>
+                    <p class="text-center text-muted small mb-4">Grafik berdasarkan 20 Epoch pelatihan pada file <em>training_pneumonia.ipynb</em></p>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="custom-card p-3 h-100">
+                        <h6 class="fw-bold text-center">Learning Curve</h6>
+                        <div style="height: 250px; width: 100%;">
+                            <canvas id="trainingChart"></canvas>
+                        </div>
+                        <p class="small text-muted text-center mt-2">Garis merah (Loss) menurun, garis biru (Akurasi) meningkat stabil.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="custom-card p-3 h-100 text-center">
+                        <h6 class="fw-bold">Confusion Matrix (Data Uji)</h6>
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <table class="table table-bordered table-sm mt-3" style="font-size: 0.9rem;">
+                                <thead>
+                                    <tr class="bg-light">
+                                        <th style="background:transparent"></th>
+                                        <th>Pred: Normal</th>
+                                        <th>Pred: Pneumonia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th class="bg-light">Aktual: Normal</th>
+                                        <td style="background-color: #d1fae5;" class="fw-bold text-success">170 (TN)</td>
+                                        <td style="background-color: #fee2e2;">64 (FP)</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Aktual: Pneu</th>
+                                        <td style="background-color: #fee2e2;">6 (FN)</td>
+                                        <td style="background-color: #d1fae5;" class="fw-bold text-success">384 (TP)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="small text-muted">Model sangat sensitif terhadap Pneumonia (hanya 8 False Negative).</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="custom-card p-3 h-100">
+                        <h6 class="fw-bold text-center">ROC Curve</h6>
+                        <div style="height: 250px; width: 100%;">
+                            <canvas id="rocChart"></canvas>
+                        </div>
+                        <p class="small text-muted text-center mt-2">Area Under Curve (AUC) = 0.9585. Menunjukkan performa klasifikasi yang sangat baik.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="spa-section">
+        <div class="container text-center">
+            <h6 class="text-primary fw-bold text-uppercase">Orang di Balik Layar</h6>
+            <h2 class="fw-bold mb-5">Tim Pengembang & Pembimbing</h2>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-6 col-lg-4">
+                    <div class="team-card-new">
+                        <div class="team-avatar-container">
+                            <img src="https://0.academia-photos.com/217851298/76105690/64625311/s200_putri.yuli_utami.jpeg" 
+                                 class="team-avatar-img" alt="Dosen">
+                        </div>
+                        <h5 class="fw-bold mb-1">Putri Yuli Utami.,S.Kom.,M.Kom</h5>
+                        <p class="text-muted small mb-0">NIDN. 1108079001</p>
+                        <div class="team-role-badge">Dosen Pembimbing</div>
+                        <p class="small text-muted mt-3 fst-italic">"Membimbing arah penelitian dan validasi metode analisis data."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center g-4">
+                <div class="col-md-5 col-lg-4">
+                    <div class="team-card-new">
+                        <div class="team-avatar-container">
+                            <img src="https://uploads.onecompiler.io/42bwrvdku/44675w5me/Rangga.jpeg" 
+                                 class="team-avatar-img" alt="Member">
+                        </div>
+                        <h5 class="fw-bold mb-1">Rangga Aditya Saputra</h5>
+                        <p class="text-muted small mb-2">NIM: 221230045</p>
+                        <div class="team-role-badge">Mahasiswa</div>
+                        <div class="mt-3">
+                            <i class="bi bi-github mx-2 text-muted" style="cursor:pointer"></i>
+                            <i class="bi bi-linkedin mx-2 text-muted" style="cursor:pointer"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-5 col-lg-4">
+                    <div class="team-card-new">
+                        <div class="team-avatar-container">
+                            <img src="https://uploads.onecompiler.io/42bwrvdku/44675w5me/Ferdian.jpeg" 
+                                 class="team-avatar-img" alt="Member">
+                        </div>
+                        <h5 class="fw-bold mb-1">Ferdian Putra Wijaksono</h5>
+                        <p class="text-muted small mb-2">NIM: 221230047</p>
+                        <div class="team-role-badge">Mahasiswa</div>
+                        <div class="mt-3">
+                            <i class="bi bi-github mx-2 text-muted" style="cursor:pointer"></i>
+                            <i class="bi bi-linkedin mx-2 text-muted" style="cursor:pointer"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <p class="mb-0 fw-medium">
+                        &copy; 2025 <strong>Project Analisis Big Data</strong>. All Rights Reserved.
+                    </p>
+                    <p class="small text-muted mb-0 mt-1">Dikembangkan untuk tujuan edukasi dan penelitian.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // === SPA NAVIGATION LOGIC ===
+        function showSection(sectionId) {
+            document.querySelectorAll('.spa-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const navbarCollapse = document.getElementById('navbarNav');
+            if (navbarCollapse.classList.contains('show')) {
+                new bootstrap.Collapse(navbarCollapse).hide();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // === PREDICTION LOGIC (CONNECTED TO BACKEND) ===
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadForm = document.getElementById('upload-form');
+        const btnAnalyze = document.getElementById('btn-analyze');
+        const btnText = document.getElementById('btn-text');
+        const spinner = btnAnalyze.querySelector('.spinner-border');
+        const dropArea = document.getElementById('drop-area');
+
+        // Drag & Drop Styling
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropArea.addEventListener(evt, (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = 'var(--primary-color)';
+                dropArea.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            dropArea.addEventListener(evt, (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = 'var(--border-color)';
+                dropArea.style.backgroundColor = 'rgba(128, 128, 128, 0.05)';
+            });
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        });
+
+        // File Selection
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if(!file.type.match('image.*')) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Format Salah',
+                        text: 'Mohon unggah file gambar (JPG/PNG).'
+                    });
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    btnAnalyze.disabled = false;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Submit Handler (REAL BACKEND CALL)
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Menganalisis...',
+                text: 'Mohon tunggu sebentar, AI sedang bekerja.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            btnAnalyze.disabled = true;
+            btnText.textContent = "Menganalisis...";
+            spinner.classList.remove('d-none');
+            
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server Error: ${response.status}`);
+                }
+
+                const data = await response.json(); 
+                
+                Swal.close();
+                btnAnalyze.disabled = false;
+                btnText.textContent = "Jalankan Analisis";
+                spinner.classList.add('d-none');
+
+                if(data.error) {
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: data.error });
+                } else {
+                    let swalIcon = 'success';
+                    let swalTitle = 'Normal';
+                    
+                    if (data.status === 'danger') {
+                        swalIcon = 'error'; 
+                        swalTitle = 'Terdeteksi Pneumonia';
+                    } else if (data.status === 'warning') {
+                        swalIcon = 'warning';
+                        swalTitle = 'Suspect / Tidak Yakin';
+                    } else {
+                        swalIcon = 'success';
+                        swalTitle = 'Paru-paru Normal';
+                    }
+
+                    Swal.fire({
+                        icon: swalIcon,
+                        title: swalTitle,
+                        text: `Hasil: ${data.result} (${data.confidence})`,
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+
+                    document.getElementById('result-placeholder').classList.add('d-none');
+                    document.getElementById('result-card').classList.remove('d-none');
+
+                    const diagText = document.getElementById('diagnosis-text');
+                    const confText = document.getElementById('confidence-text');
+                    const confBar = document.getElementById('confidence-bar');
+                    const msgText = document.getElementById('result-message');
+                    const headerBg = document.getElementById('result-header-bg');
+                    const infoIcon = document.getElementById('info-icon');
+
+                    diagText.innerText = data.result;
+                    confText.innerText = data.confidence;
+                    confBar.style.width = data.confidence;
+                    msgText.innerText = data.message;
+
+                    if (data.status === 'danger') { // Pneumonia
+                        diagText.style.color = '#ef4444';
+                        confText.style.color = '#ef4444';
+                        confBar.className = "progress-bar bg-danger";
+                        headerBg.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+                        infoIcon.className = "bi bi-exclamation-triangle-fill me-2 fs-5 text-danger";
+                    } else if (data.status === 'warning') { // Suspect
+                        diagText.style.color = '#f59e0b';
+                        confText.style.color = '#f59e0b';
+                        confBar.className = "progress-bar bg-warning";
+                        headerBg.style.backgroundColor = "rgba(245, 158, 11, 0.1)";
+                        infoIcon.className = "bi bi-question-circle-fill me-2 fs-5 text-warning";
+                    } else { // Normal
+                        diagText.style.color = '#10b981';
+                        confText.style.color = '#10b981';
+                        confBar.className = "progress-bar bg-success";
+                        headerBg.style.backgroundColor = "rgba(16, 185, 129, 0.1)";
+                        infoIcon.className = "bi bi-check-circle-fill me-2 fs-5 text-success";
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                btnAnalyze.disabled = false;
+                btnText.textContent = "Jalankan Analisis";
+                spinner.classList.add('d-none');
+                Swal.fire({ icon: 'error', title: 'Kesalahan Server', text: 'Gagal menghubungi server. Pastikan app.py berjalan.' });
+            }
+        });
+    </script>
+
+    <script>
+        // --- 1. DATA VISUALIZATION LOGIC ---
+        
+        // CHART 1: CLASS DISTRIBUTION
+        // Data diambil dari deskripsi umum dataset Chest X-Ray (Imbalanced)
+        const ctxDist = document.getElementById('classDistChart').getContext('2d');
+        new Chart(ctxDist, {
+            type: 'doughnut',
+            data: {
+                labels: ['Normal', 'Pneumonia'],
+                datasets: [{
+                    data: [1583, 4273], // Estimasi total data (27% vs 73%)
+                    backgroundColor: ['#10b981', '#ef4444'],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // CHART 2: TRAINING HISTORY (LOSS & ACCURACY)
+        // Data REAL diambil dari 'training_pneumonia.ipynb' (Cell 17)
+        // Epochs: 1, 5, 10, 15, 20 (Sample points)
+        const ctxTrain = document.getElementById('trainingChart').getContext('2d');
+        new Chart(ctxTrain, {
+            type: 'line',
+            data: {
+                labels: ['1', '3', '5', '8', '10', '13', '15', '18', '20'],
+                datasets: [
+                    {
+                        label: 'Training Acc',
+                        data: [0.908, 0.918, 0.932, 0.936, 0.947, 0.948, 0.942, 0.945, 0.952],
+                        borderColor: '#3b82f6',
+                        tension: 0.3,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Val Acc',
+                        data: [0.811, 0.938, 0.953, 0.919, 0.881, 0.961, 0.941, 0.879, 0.962],
+                        borderColor: '#93c5fd',
+                        borderDash: [5, 5],
+                        tension: 0.3,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Training Loss',
+                        data: [1.10, 1.04, 0.99, 0.93, 0.89, 0.85, 0.85, 0.83, 0.80],
+                        borderColor: '#ef4444',
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Accuracy' },
+                        min: 0.7, max: 1.0
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Loss' },
+                        grid: { drawOnChartArea: false }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { usePointStyle: true, boxWidth: 6 } }
+                }
+            }
+        });
+
+        // CHART 4: ROC CURVE
+        // Simulasi kurva untuk AUC 0.96 (Sesuai output Cell 21)
+        const ctxRoc = document.getElementById('rocChart').getContext('2d');
+        new Chart(ctxRoc, {
+            type: 'line',
+            data: {
+                labels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0], // False Positive Rate
+                datasets: [{
+                    label: 'ROC (AUC = 0.96)',
+                    data: [0, 0.85, 0.92, 0.96, 0.98, 0.99, 1.0, 1.0], // True Positive Rate
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Random Guess',
+                    data: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0],
+                    borderColor: '#9ca3af',
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'False Positive Rate' }, min: 0, max: 1 },
+                    y: { title: { display: true, text: 'True Positive Rate' }, min: 0, max: 1 }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
