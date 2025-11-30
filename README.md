@@ -80,3 +80,48 @@ Pastikan **Python 3.8+** dan **Git** sudah terinstall di komputer Anda.
 ```bash
 git clone [https://github.com/Raanggasa/PneumoDetect.git](https://github.com/Raanggasa/PneumoDetect.git)
 cd PneumoDetect
+```
+
+### 2. Buat Virtual Environment (Opsional tapi Disarankan)
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# Mac/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Jalankan Aplikasi
+```bash
+python app.py
+```
+
+Buka browser Anda dan akses alamat: ```bash http://127.0.0.1:5000 ```
+
+### 📸 Antarmuka Aplikasi
+![Beranda](https://uploads.onecompiler.io/42bwrvdku/4467dr656/127.0.0.1_5000_.png)
+![Diagnosa](https://uploads.onecompiler.io/4467dvrwg/4467dvwsh/127.0.0.1_5000_%20(1).png)
+![Tentang Sistem](https://uploads.onecompiler.io/4467dvrwg/4467dvwsh/127.0.0.1_5000_%20(2).png)
+![Tim](https://uploads.onecompiler.io/4467dvrwg/4467dvwsh/127.0.0.1_5000_%20(3).png)
+
+### ⚠️ Disclaimer Medis
+**PENTING:**
+* Aplikasi ini dikembangkan semata-mata untuk tujuan Edukasi dan Penelitian.
+* Hasil prediksi yang diberikan oleh sistem AI ini BUKAN merupakan diagnosis medis final.
+* Sistem ini tidak menggantikan peran dokter atau ahli radiologi.
+* Selalu konsultasikan hasil pemeriksaan dengan tenaga medis profesional.
+* Pengembang tidak bertanggung jawab atas keputusan medis yang diambil berdasarkan hasil aplikasi ini.
+
+### 👥 Tim Pengembang
+* **Putri Yuli Utami.,S.Kom.,M.Kom** - Dosen Pembimbing
+* **Rangga Aditya Saputra** - Mahasiswa
+* **Ferdian Putra Wijaksono** - Mahasiswa
+
+
